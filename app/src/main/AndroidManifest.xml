@@ -10,7 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Photojournalandroid">
         <activity
-            android:name=".addEntry"
+            android:name=".ShowEntriesActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AddEntryActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"

@@ -8,11 +8,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-public class addEntry extends AppCompatActivity {
+public class AddEntryActivity extends AppCompatActivity {
 
+    private static final int PICK_IMAGE = 1;
     EditText editTextTitle, editTextDesc;
+    ImageView imageView;
     Button btnSave;
     DatabaseHelper db;
     @Override
@@ -21,6 +24,7 @@ public class addEntry extends AppCompatActivity {
         setContentView(R.layout.activity_add_entry);
         editTextTitle = findViewById(R.id.editTextTitle);
         editTextDesc = findViewById(R.id.editTextDesc);
+        imageView = findViewById(R.id.imageView);
         btnSave = findViewById(R.id.btnSave);
         db = new DatabaseHelper(this);
 
@@ -38,12 +42,12 @@ public class addEntry extends AppCompatActivity {
 //                    Intent intent = new Intent(addEntry.this, ShowData.class);
 //                    startActivity(intent);
                     getEntry();
-                    Toast.makeText(addEntry.this, "Data Inserted",
+                    Toast.makeText(AddEntryActivity.this, "Data Inserted",
                             Toast.LENGTH_SHORT).show();
                 }
 
                 else
-                    Toast.makeText(addEntry.this, "Data is not inserted",
+                    Toast.makeText(AddEntryActivity.this, "Data is not inserted",
                             Toast.LENGTH_SHORT).show();
             }
         });
@@ -51,7 +55,7 @@ public class addEntry extends AppCompatActivity {
     private void getEntry() {
         Cursor cursor = db.getEntry();
         if(cursor.getCount() <= 0) {
-            Toast.makeText(addEntry.this, "Data is empty",
+            Toast.makeText(AddEntryActivity.this, "Data is empty",
                     Toast.LENGTH_SHORT).show();
             return;
         }
