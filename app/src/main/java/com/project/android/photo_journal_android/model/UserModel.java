@@ -1,4 +1,4 @@
-package com.project.android.photo_journal_android;
+package com.project.android.photo_journal_android.model;
 
 public class UserModel {
     private int id;
