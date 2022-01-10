@@ -5,10 +5,25 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.Toast;
 
 public class ShowEntriesActivity extends AppCompatActivity {
     DatabaseHelper db;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+
+        // if logged in account
+        inflater.inflate(R.menu.menu_account, menu);
+
+        // else if guest
+//        inflater.inflate(R.menu.menu_account_guest, menu);
+
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:icon="@drawable/ic_outline_account_circle_24"
+        app:showAsAction="always">
+
+        <menu>
+            <item
+                android:id="@+id/navLogin"
+                android:icon="@drawable/ic_outline_login_24"
+                android:title="Log In" />
+
+            <item
+                android:id="@+id/navRegister"
+                android:icon="@drawable/ic_outline_app_registration_24"
+                android:title="Register" />
+        </menu>
+    </item>
+
+</menu>

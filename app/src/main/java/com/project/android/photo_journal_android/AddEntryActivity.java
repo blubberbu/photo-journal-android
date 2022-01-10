@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +29,19 @@ public class AddEntryActivity extends AppCompatActivity {
 
     String title, description, image;
     int user_id;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+
+        // if logged in account
+        inflater.inflate(R.menu.menu_account, menu);
+
+        // else if guest
+//        inflater.inflate(R.menu.menu_account_guest, menu);
+
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +107,7 @@ public class AddEntryActivity extends AppCompatActivity {
                 Uri selectedImageUri = data.getData();
                 image = selectedImageUri.toString();
 
-                // Use uri.parse to change string to Uri
+                // Change string to Uri
                 Uri finalImage = Uri.parse(image);
 
                 if (null != selectedImageUri) {
