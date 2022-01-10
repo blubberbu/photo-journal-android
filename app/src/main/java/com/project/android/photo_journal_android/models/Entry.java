@@ -6,6 +6,7 @@ public class Entry {
     private String image;
     private String title;
     private String description;
+    private String date;
 
     public Entry(int id, int user_id, String image, String title, String description) {
         this.id = id;
@@ -23,6 +24,7 @@ public class Entry {
                 ", image='" + image + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
+                ", date='" + date + '\'' +
                 '}';
     }
 
@@ -64,5 +66,9 @@ public class Entry {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getDate() {
+        return date;  
     }
 }

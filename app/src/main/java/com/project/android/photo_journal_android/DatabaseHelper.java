@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.project.android.photo_journal_android.models.Entry;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, "PhotoJournal.db", null, 1);
@@ -42,12 +45,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean insertEntry(Entry entry) {
         SQLiteDatabase db = this.getWritableDatabase();
 
+        SimpleDateFormat formatter = new SimpleDateFormat("E, dd/MM/yyyy, HH:mm:ss");
+        String currentDate = formatter.format(new Date());
+
         ContentValues contentValues = new ContentValues();
 
         contentValues.put("user_id", entry.getUser_id());
         contentValues.put("image", entry.getImage());
         contentValues.put("title", entry.getTitle());
         contentValues.put("description", entry.getDescription());
+        contentValues.put("date", currentDate);
 
         long result = db.insert("entries", null, contentValues);
 
