@@ -10,13 +10,13 @@ import com.project.android.photo_journal_android.model.EntryModel;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
-        super(context, "PhotoJournal", null, 1);
+        super(context, "PhotoJournal.db", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createUsersQuery = "Create table users(" +
-                "id int primary key autoincrement, " +
+                "id INTEGER primary key autoincrement, " +
                 "name string, " +
                 "email string, " +
                 "password string, " +
@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createUsersQuery);
 
         String createEntriesQuery = "Create table entries(" +
-                "id int primary key autoincrement, " +
+                "id INTEGER primary key autoincrement, " +
                 "user_id int, " +
                 "image string, " +
                 "title text, " +
