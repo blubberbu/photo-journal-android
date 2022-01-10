@@ -3,12 +3,14 @@ package com.project.android.photo_journal_android.model;
 public class EntryModel {
     private int id;
     private int user_id;
-    private int title;
-    private int body;
+    private String image;
+    private String title;
+    private String body;
 
-    public EntryModel(int id, int user_id, int title, int body) {
+    public EntryModel(int id, int user_id, String image, String title, String body) {
         this.id = id;
         this.user_id = user_id;
+        this.image = image;
         this.title = title;
         this.body = body;
     }
@@ -18,8 +20,9 @@ public class EntryModel {
         return "EntryModel{" +
                 "id=" + id +
                 ", user_id=" + user_id +
-                ", title=" + title +
-                ", body=" + body +
+                ", image='" + image + '\'' +
+                ", title='" + title + '\'' +
+                ", body='" + body + '\'' +
                 '}';
     }
 
@@ -39,19 +42,27 @@ public class EntryModel {
         this.user_id = user_id;
     }
 
-    public int getTitle() {
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(int title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public int getBody() {
+    public String getBody() {
         return body;
     }
 
-    public void setBody(int body) {
+    public void setBody(String body) {
         this.body = body;
     }
 }
