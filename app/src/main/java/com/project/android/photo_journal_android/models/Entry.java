@@ -1,13 +1,13 @@
-package com.project.android.photo_journal_android.model;
+package com.project.android.photo_journal_android.models;
 
-public class EntryModel {
+public class Entry {
     private int id;
     private int user_id;
     private String image;
     private String title;
     private String description;
 
-    public EntryModel(int id, int user_id, String image, String title, String description) {
+    public Entry(int id, int user_id, String image, String title, String description) {
         this.id = id;
         this.user_id = user_id;
         this.image = image;
@@ -17,7 +17,7 @@ public class EntryModel {
 
     @Override
     public String toString() {
-        return "EntryModel{" +
+        return "Entry{" +
                 "id=" + id +
                 ", user_id=" + user_id +
                 ", image='" + image + '\'' +

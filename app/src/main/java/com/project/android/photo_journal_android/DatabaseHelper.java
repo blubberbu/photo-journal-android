@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.project.android.photo_journal_android.model.EntryModel;
+import com.project.android.photo_journal_android.models.Entry;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
@@ -39,28 +39,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists PhotoJournal");
     }
 
-    public boolean insertEntry(EntryModel entryModel) {
+    public boolean insertEntry(Entry entry) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
 
-        contentValues.put("user_id", entryModel.getUser_id());
-        contentValues.put("image", entryModel.getImage());
-        contentValues.put("title", entryModel.getTitle());
-        contentValues.put("description", entryModel.getDescription());
+        contentValues.put("user_id", entry.getUser_id());
+        contentValues.put("image", entry.getImage());
+        contentValues.put("title", entry.getTitle());
+        contentValues.put("description", entry.getDescription());
 
+        long result = db.insert("entries", null, contentValues);
 
-        long hasil = db.insert("entries", null, contentValues);
-        if(hasil == -1) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return !(result == -1);
     }
+
     public Cursor getEntry() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("Select * from entries", null);
+
         return cursor;
     }
 }
