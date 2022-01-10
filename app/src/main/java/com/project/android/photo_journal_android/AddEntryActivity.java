@@ -60,18 +60,17 @@ public class AddEntryActivity extends AppCompatActivity {
 
                 Entry entry;
 
-                try {
+                if (title.length() < 1 || description.length() < 1 || image == null) {
+                    Toast.makeText(AddEntryActivity.this, "Please fill the form properly.", Toast.LENGTH_SHORT).show();
+                } else {
                     entry = new Entry(-1, user_id, image, title, description);
-                    Toast.makeText(AddEntryActivity.this, entry.toString(), Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    Toast.makeText(AddEntryActivity.this, "Data is not inserted", Toast.LENGTH_SHORT).show();
-                    entry = new Entry(-1, 0, "error", "error", "error");
+                    db.insertEntry(entry);
+
+                    Toast.makeText(AddEntryActivity.this, "Your entry has been posted.", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(AddEntryActivity.this, MainActivity.class);
+                    startActivity(intent);
                 }
-
-                db.insertEntry(entry);
-
-                Intent intent = new Intent(AddEntryActivity.this, MainActivity.class);
-                startActivity(intent);
             }
         });
     }
@@ -93,7 +92,7 @@ public class AddEntryActivity extends AppCompatActivity {
                 Uri selectedImageUri = data.getData();
                 image = selectedImageUri.toString();
 
-//              Use uri.parse to change string to Uri
+                // Use uri.parse to change string to Uri
                 Uri finalimage = Uri.parse(image);
 
                 if (null != selectedImageUri) {
