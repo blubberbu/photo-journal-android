@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.project.android.photo_journal_android.model.EntryModel;
+
 public class AddEntryActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE = 1;
@@ -31,24 +33,28 @@ public class AddEntryActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String id = "1";
+
                 String title = editTextTitle.getText().toString();
                 String description = editTextDesc.getText().toString();
+                String image = "";
+                int user_id = 0;
 
-                boolean isInserted = db.insertEntry(id, title,
-                        description);
+                EntryModel entryModel;
 
-                if(isInserted) {
+                try {
 //                    Intent intent = new Intent(addEntry.this, ShowData.class);
 //                    startActivity(intent);
-                    getEntry();
-                    Toast.makeText(AddEntryActivity.this, "Data Inserted",
+                    entryModel = new EntryModel(-1, user_id, image, title, description);
+                    Toast.makeText(AddEntryActivity.this, entryModel.toString(),
                             Toast.LENGTH_SHORT).show();
                 }
-
-                else
+                catch(Exception e) {
                     Toast.makeText(AddEntryActivity.this, "Data is not inserted",
                             Toast.LENGTH_SHORT).show();
+                    entryModel = new EntryModel(-1, 0, "error", "error", "error");
+                }
+                db.insertEntry(entryModel);
+                getEntry();
             }
         });
     }
@@ -63,8 +69,8 @@ public class AddEntryActivity extends AppCompatActivity {
         while(cursor.moveToNext()) {
             //buffer ganti menjadi listview
             buffer.append("Id : " + cursor.getString(0) + "\n");
-            buffer.append("Title : " + cursor.getString(1) + "\n");
-            buffer.append("Description : " + cursor.getString(2) + "\n");
+            buffer.append("Title : " + cursor.getString(3) + "\n");
+            buffer.append("Description : " + cursor.getString(4) + "\n");
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
