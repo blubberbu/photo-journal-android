@@ -15,10 +15,12 @@
         android:theme="@style/Theme.Photojournalandroid">
         <activity
             android:name=".ShowEntriesActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".AddEntryActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
