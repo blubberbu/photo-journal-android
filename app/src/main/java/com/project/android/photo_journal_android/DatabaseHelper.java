@@ -21,15 +21,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String createUsersQuery = "Create table users(" +
                 "id INTEGER primary key autoincrement, " +
                 "name text, " +
-                "email text, " +
-                "password text, " +
-                "role text)";
+                "email text unique, " +
+                "password text)";
 
         db.execSQL(createUsersQuery);
 
         String createEntriesQuery = "Create table entries(" +
                 "id INTEGER primary key autoincrement, " +
-                "user_id int, " +
+                "user_id INTEGER, " +
                 "image text, " +
                 "title text, " +
                 "description text, " + 
