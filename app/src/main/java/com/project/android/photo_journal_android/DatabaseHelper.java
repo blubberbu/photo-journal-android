@@ -20,19 +20,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String createUsersQuery = "Create table users(" +
                 "id INTEGER primary key autoincrement, " +
-                "name string, " +
-                "email string, " +
-                "password string, " +
-                "role string)";
+                "name text, " +
+                "email text, " +
+                "password text, " +
+                "role text)";
 
         db.execSQL(createUsersQuery);
 
         String createEntriesQuery = "Create table entries(" +
                 "id INTEGER primary key autoincrement, " +
                 "user_id int, " +
-                "image string, " +
+                "image text, " +
                 "title text, " +
-                "description text)";
+                "description text, " + 
+                "date text)";
 
         db.execSQL(createEntriesQuery);
     }
