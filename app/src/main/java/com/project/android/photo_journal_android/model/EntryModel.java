@@ -5,14 +5,14 @@ public class EntryModel {
     private int user_id;
     private String image;
     private String title;
-    private String body;
+    private String description;
 
-    public EntryModel(int id, int user_id, String image, String title, String body) {
+    public EntryModel(int id, int user_id, String image, String title, String description) {
         this.id = id;
         this.user_id = user_id;
         this.image = image;
         this.title = title;
-        this.body = body;
+        this.description = description;
     }
 
     @Override
@@ -22,7 +22,7 @@ public class EntryModel {
                 ", user_id=" + user_id +
                 ", image='" + image + '\'' +
                 ", title='" + title + '\'' +
-                ", body='" + body + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 
@@ -58,11 +58,11 @@ public class EntryModel {
         this.title = title;
     }
 
-    public String getBody() {
-        return body;
+    public String getDescription() {
+        return description;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

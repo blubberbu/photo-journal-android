@@ -6,41 +6,48 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.project.android.photo_journal_android.model.EntryModel;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
-        super(context, "Entries", null, 1);
+        super(context, "PhotoJournal", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
-        db.execSQL("Create table users(" +
-                "id int primary key, " +
+        String createUsersQuery = "Create table users(" +
+                "id int primary key autoincrement, " +
                 "name string, " +
                 "email string, " +
                 "password string, " +
-                "role string)");
+                "role string)";
 
-        db.execSQL("Create table entries(" +
-                "id int primary key, " +
+        db.execSQL(createUsersQuery);
+
+        String createEntriesQuery = "Create table entries(" +
+                "id int primary key autoincrement, " +
                 "user_id int, " +
                 "image string, " +
                 "title text, " +
-                "description text)");
+                "description text)";
+
+        db.execSQL(createEntriesQuery);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("drop table if exists entries");
+        db.execSQL("drop table if exists PhotoJournal");
     }
 
-    public boolean insertEntry(String id, String title, String description) {
+    public boolean insertEntry(EntryModel entryModel) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put("id", id);
-        contentValues.put("title", title);
-        contentValues.put("description", description);
+
+        contentValues.put("user_id", entryModel.getUser_id());
+        contentValues.put("image", entryModel.getImage());
+        contentValues.put("title", entryModel.getTitle());
+        contentValues.put("description", entryModel.getDescription());
 
 
         long hasil = db.insert("entries", null, contentValues);
