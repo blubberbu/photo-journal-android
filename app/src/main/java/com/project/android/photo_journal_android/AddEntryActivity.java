@@ -93,10 +93,10 @@ public class AddEntryActivity extends AppCompatActivity {
                 image = selectedImageUri.toString();
 
                 // Use uri.parse to change string to Uri
-                Uri finalimage = Uri.parse(image);
+                Uri finalImage = Uri.parse(image);
 
                 if (null != selectedImageUri) {
-                    imageView.setImageURI(finalimage);
+                    imageView.setImageURI(finalImage);
                 }
             }
         }

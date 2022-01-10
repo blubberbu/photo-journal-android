@@ -18,8 +18,8 @@ public class ShowEntriesActivity extends AppCompatActivity {
         db = new DatabaseHelper(this);
     }
 
-    private void getEntry() {
-        Cursor cursor = db.getEntry();
+    private void getEntries() {
+        Cursor cursor = db.getEntries();
 
         if (cursor.getCount() <= 0) {
             Toast.makeText(ShowEntriesActivity.this, "Data is empty", Toast.LENGTH_SHORT).show();
