@@ -20,7 +20,7 @@
             android:id="@+id/imageEntry"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:rotation="90"
+            android:scaleType="centerCrop"
             app:brightness="0.5"
             app:saturation="0.2" />
 
