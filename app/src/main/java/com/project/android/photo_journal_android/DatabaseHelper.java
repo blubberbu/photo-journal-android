@@ -14,7 +14,6 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -56,7 +55,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SimpleDateFormat formatter = new SimpleDateFormat("E, dd/MM/yyyy, HH:mm:ss");
         String currentDate = formatter.format(new Date());
-
 
         //Get image in byte to store into db
         Bitmap imgBmp = entry.getImage();
@@ -107,34 +105,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return returnList;
     }
 
-    public ArrayList<Entry> getEntriesArray() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        ArrayList<Entry> returnList = new ArrayList<>();
-        String selectQuery = "SELECT * FROM entries";
+    public Entry getEntry(Integer id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from entries where id=?", new String[]{id.toString()});
+        Entry entry = null;
 
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        while (cursor.moveToNext()) {
+            int userId = cursor.getInt(1);
+            byte[] imageBytesToBmp = cursor.getBlob(2);
+            Bitmap imageBmp = BitmapFactory.decodeByteArray(imageBytesToBmp, 0, imageBytesToBmp.length);
+            String title = cursor.getString(3);
+            String description = cursor.getString(4);
+            String date = cursor.getString(5);
 
-        if (cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(0);
-                int user_id = cursor.getInt(1);
-                byte[] imageBytesToBmp = cursor.getBlob(2);
-                //Convert byte from db to bitmap for object class
-                Bitmap imageBmp = BitmapFactory.decodeByteArray(imageBytesToBmp, 0, imageBytesToBmp.length);
-                String title = cursor.getString(3);
-                String description = cursor.getString(4);
-                String date = cursor.getString(5);
-
-                Entry newEntry = new Entry(id, user_id, imageBmp, title, description, date);
-                returnList.add(newEntry);
-
-            }while(cursor.moveToNext());
-        }else {
-            // does not add anything to the list
+            entry = new Entry(id, userId, imageBmp, title, description, date);
         }
 
         cursor.close();
         db.close();
-        return returnList;
+
+        return entry;
     }
 }

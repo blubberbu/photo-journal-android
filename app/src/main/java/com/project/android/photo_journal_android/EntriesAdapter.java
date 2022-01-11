@@ -1,6 +1,7 @@
 package com.project.android.photo_journal_android;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,7 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntryVie
         return entries.size();
     }
 
-    public class EntryViewHolder extends RecyclerView.ViewHolder {
+    public class EntryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageFilterView imageEntry;
         TextView textDate, textTitle;
 
@@ -55,6 +56,16 @@ public class EntriesAdapter extends RecyclerView.Adapter<EntriesAdapter.EntryVie
             imageEntry = (ImageFilterView) itemView.findViewById(R.id.imageEntry);
             textDate = (TextView) itemView.findViewById(R.id.textDate);
             textTitle = (TextView) itemView.findViewById(R.id.textTitle);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(view.getContext(), EntryActivity.class);
+            intent.putExtra("Entry ID", entries.get(getAdapterPosition()).getId());
+
+            view.getContext().startActivity(intent);
         }
     }
 }
