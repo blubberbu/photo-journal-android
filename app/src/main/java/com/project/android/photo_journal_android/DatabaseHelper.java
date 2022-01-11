@@ -9,7 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.project.android.photo_journal_android.models.Entry;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
@@ -66,5 +68,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("select * from entries", null);
 
         return cursor;
+    }
+
+    public List<Entry> getEntriesList() {
+        List<Entry> returnList = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM entries";
+
+        //Use getReadable instead of getWritable because writable would cause
+        //  the database to lock up from other processes and cause a bottleneck
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(0);
+                int user_id = cursor.getInt(1);
+                String image = cursor.getString(2);
+                String title = cursor.getString(3);
+                String description = cursor.getString(4);
+                String date = cursor.getString(5);
+
+                Entry newEntry = new Entry(id, user_id, image, title, description, date);
+                returnList.add(newEntry);
+
+            }while(cursor.moveToNext());
+        }else {
+            // does not add anything to the list
+        }
+
+        cursor.close();
+        db.close();
+        return returnList;
     }
 }

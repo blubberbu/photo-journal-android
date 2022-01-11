@@ -8,12 +8,13 @@ public class Entry {
     private String description;
     private String date;
 
-    public Entry(int id, int user_id, String image, String title, String description) {
+    public Entry(int id, int user_id, String image, String title, String description, String date) {
         this.id = id;
         this.user_id = user_id;
         this.image = image;
         this.title = title;
         this.description = description;
+        this.date = date;
     }
 
     @Override
@@ -69,6 +70,10 @@ public class Entry {
     }
 
     public String getDate() {
-        return date;  
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

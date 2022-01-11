@@ -7,10 +7,18 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import com.project.android.photo_journal_android.models.Entry;
+
+import java.util.List;
 
 public class ShowEntriesActivity extends AppCompatActivity {
     DatabaseHelper db;
+    ListView lvEntries;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -30,7 +38,18 @@ public class ShowEntriesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_entries);
 
-        db = new DatabaseHelper(this);
+        lvEntries = findViewById(R.id.lvEntries);
+        DatabaseHelper db = new DatabaseHelper(ShowEntriesActivity.this);
+        List<Entry> entries = db.getEntriesList();
+        EntriesAdapter entriesAdapter = new EntriesAdapter(ShowEntriesActivity.this, entries);
+        lvEntries.setAdapter(entriesAdapter);
+
+//        lvEntries.getOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(ShowEntriesActivity.this, "Entry ID: " + ((Entry)entriesAdapter.getItem(position).getID), Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
     private void getEntries() {

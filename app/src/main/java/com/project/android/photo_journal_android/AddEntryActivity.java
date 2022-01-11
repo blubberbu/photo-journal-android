@@ -6,8 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -17,6 +21,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.project.android.photo_journal_android.models.Entry;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class AddEntryActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 200;
@@ -78,7 +87,7 @@ public class AddEntryActivity extends AppCompatActivity {
                 if (title.length() < 1 || description.length() < 1 || image == null) {
                     Toast.makeText(AddEntryActivity.this, "Please fill the form properly.", Toast.LENGTH_SHORT).show();
                 } else {
-                    entry = new Entry(-1, user_id, image, title, description);
+                    entry = new Entry(-1, user_id, image, title, description, "date");
                     db.insertEntry(entry);
 
                     Toast.makeText(AddEntryActivity.this, "Your entry has been posted.", Toast.LENGTH_SHORT).show();
@@ -104,16 +113,23 @@ public class AddEntryActivity extends AppCompatActivity {
 
         if (resultCode == RESULT_OK) {
             if (requestCode == PICK_IMAGE) {
-                Uri selectedImageUri = data.getData();
-                image = selectedImageUri.toString();
+                Uri selectedImage = data.getData();
+//                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+//
+//                Cursor cursor = getContentResolver().query(selectedImage,
+//                        filePathColumn, null, null, null);
+//                cursor.moveToFirst();
+//
+//                int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA;
+//                String picturePath = cursor.getString(columnIndex);
+//                cursor.close();
 
-                // Change string to Uri
-                Uri finalImage = Uri.parse(image);
+                image = selectedImage.toString();
 
-                if (null != selectedImageUri) {
-                    imageView.setImageURI(finalImage);
-                }
+                Uri imgUri = Uri.parse(image);
+                imageView.setImageURI(imgUri);
             }
         }
     }
+
 }
