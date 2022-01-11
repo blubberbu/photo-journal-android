@@ -66,7 +66,7 @@ public class EntryActivity extends AppCompatActivity {
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(EntryActivity.this, ShowEntriesActivity.class);
+                Intent intent = new Intent(EntryActivity.this, MainActivity.class);
                 startActivity(intent);
 
                 db.deleteEntry(entryId);

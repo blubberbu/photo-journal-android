@@ -15,10 +15,6 @@
         <activity
             android:name=".EntryActivity"
             android:exported="false"
-            android:parentActivityName=".ShowEntriesActivity" />
-        <activity
-            android:name=".ShowEntriesActivity"
-            android:exported="true"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".AddEntryActivity"

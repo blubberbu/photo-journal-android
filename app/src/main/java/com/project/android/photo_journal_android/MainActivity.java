@@ -1,6 +1,8 @@
 package com.project.android.photo_journal_android;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,8 +11,14 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 
+import com.project.android.photo_journal_android.models.Entry;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
-    Button btnAddEntry, btnShowEntries;
+    Button buttonAddEntry;
+
+    RecyclerView rvEntries;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -29,10 +37,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btnAddEntry = findViewById(R.id.btnAddEntry);
-        btnShowEntries = findViewById(R.id.btnShowEntries);
 
-        btnAddEntry.setOnClickListener(new View.OnClickListener() {
+        buttonAddEntry = findViewById(R.id.buttonAddEntry);
+
+        buttonAddEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AddEntryActivity.class);
@@ -40,12 +48,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnShowEntries.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ShowEntriesActivity.class);
-                startActivity(intent);
-            }
-        });
+        rvEntries = findViewById(R.id.rvEntries);
+        DatabaseHelper db = new DatabaseHelper(MainActivity.this);
+
+        ArrayList<Entry> entries = db.getEntries();
+
+        EntriesAdapter entriesAdapter = new EntriesAdapter(MainActivity.this, entries);
+        rvEntries.setLayoutManager(new LinearLayoutManager(this));
+        rvEntries.setAdapter(entriesAdapter);
     }
 }
