@@ -13,7 +13,6 @@ import com.project.android.photo_journal_android.models.Entry;
 import java.util.ArrayList;
 
 public class ShowEntriesActivity extends AppCompatActivity {
-    DatabaseHelper db;
     RecyclerView rvEntries;
 
     @Override
@@ -39,7 +38,7 @@ public class ShowEntriesActivity extends AppCompatActivity {
 
         ArrayList<Entry> entries = db.getEntriesArray();
 
-        RecyclerEntriesAdapter entriesAdapter = new RecyclerEntriesAdapter(ShowEntriesActivity.this, entries);
+        EntriesAdapter entriesAdapter = new EntriesAdapter(ShowEntriesActivity.this, entries);
         rvEntries.setLayoutManager(new LinearLayoutManager(this));
         rvEntries.setAdapter(entriesAdapter);
 
