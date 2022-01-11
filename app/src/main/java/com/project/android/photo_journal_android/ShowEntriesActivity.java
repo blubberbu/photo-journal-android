@@ -36,18 +36,11 @@ public class ShowEntriesActivity extends AppCompatActivity {
         rvEntries = findViewById(R.id.rvEntries);
         DatabaseHelper db = new DatabaseHelper(ShowEntriesActivity.this);
 
-        ArrayList<Entry> entries = db.getEntriesArray();
+        ArrayList<Entry> entries = db.getEntries();
 
         EntriesAdapter entriesAdapter = new EntriesAdapter(ShowEntriesActivity.this, entries);
         rvEntries.setLayoutManager(new LinearLayoutManager(this));
         rvEntries.setAdapter(entriesAdapter);
-
-//        rvEntries.getOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(ShowEntriesActivity.this, "Entry ID: " + ((Entry)entriesAdapter.getItem(position).getID), Toast.LENGTH_SHORT).show();
-//            }
-//        });
     }
 
 }

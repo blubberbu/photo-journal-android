@@ -40,7 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "user_id INTEGER, " +
                 "image BLOB, " +
                 "title text, " +
-                "description text, " + 
+                "description text, " +
                 "date text)";
 
         db.execSQL(createEntriesQuery);
@@ -77,21 +77,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return !(result == -1);
     }
 
-    public Cursor getEntries() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from entries", null);
-
-        return cursor;
-    }
-
-    public List<Entry> getEntriesList() {
-        List<Entry> returnList = new ArrayList<>();
-
-        String selectQuery = "SELECT * FROM entries";
-
-        //Use getReadable instead of getWritable because writable would cause
-        //  the database to lock up from other processes and cause a bottleneck
+    public ArrayList<Entry> getEntries() {
         SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<Entry> returnList = new ArrayList<>();
+        String selectQuery = "SELECT * FROM entries";
 
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -108,13 +97,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 Entry newEntry = new Entry(id, user_id, imageBmp, title, description, date);
                 returnList.add(newEntry);
-            }while(cursor.moveToNext());
-        }else {
-            // does not add anything to the list
+
+            } while (cursor.moveToNext());
         }
 
         cursor.close();
         db.close();
+
         return returnList;
     }
 
