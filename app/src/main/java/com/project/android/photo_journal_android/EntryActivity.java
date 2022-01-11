@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +21,8 @@ public class EntryActivity extends AppCompatActivity {
     TextView textTitle;
     TextView textDate;
     TextView textDescription;
+
+    Button buttonDelete;
 
     DatabaseHelper db = new DatabaseHelper(EntryActivity.this);
 
@@ -56,5 +60,17 @@ public class EntryActivity extends AppCompatActivity {
         textTitle.setText(entry.getTitle());
         textDate.setText(entry.getDate());
         textDescription.setText(entry.getDescription());
+
+        buttonDelete = findViewById(R.id.buttonDelete);
+
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(EntryActivity.this, ShowEntriesActivity.class);
+                startActivity(intent);
+
+                db.deleteEntry(entryId);
+            }
+        });
     }
 }

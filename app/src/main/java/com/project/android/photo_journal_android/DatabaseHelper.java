@@ -108,6 +108,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Entry getEntry(Integer id) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from entries where id=?", new String[]{id.toString()});
+
         Entry entry = null;
 
         while (cursor.moveToNext()) {
@@ -125,5 +126,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return entry;
+    }
+
+    public boolean deleteEntry(Integer id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from entries where id=?", new String[]{id.toString()});
+
+        if (cursor.getCount() > 0) {
+            long result = db.delete("entries", "id=?", new String[]{id.toString()});
+
+            return !(result == -1);
+        }
+
+        return false;
     }
 }
