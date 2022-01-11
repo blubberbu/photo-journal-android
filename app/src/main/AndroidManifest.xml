@@ -2,9 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.project.android.photo_journal_android">
 
-<!--    Permission to Read and Write External Storage-->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -14,13 +13,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Photojournalandroid">
         <activity
+            android:name=".EntryActivity"
+            android:exported="false"
+            android:parentActivityName=".ShowEntriesActivity" />
+        <activity
             android:name=".ShowEntriesActivity"
             android:exported="true"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".AddEntryActivity"
             android:exported="true"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
