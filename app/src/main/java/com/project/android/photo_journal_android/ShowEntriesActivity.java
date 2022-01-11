@@ -1,24 +1,20 @@
 package com.project.android.photo_journal_android;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.project.android.photo_journal_android.models.Entry;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class ShowEntriesActivity extends AppCompatActivity {
     DatabaseHelper db;
-    ListView lvEntries;
+    RecyclerView rvEntries;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -38,13 +34,16 @@ public class ShowEntriesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_entries);
 
-        lvEntries = findViewById(R.id.lvEntries);
+        rvEntries = findViewById(R.id.rvEntries);
         DatabaseHelper db = new DatabaseHelper(ShowEntriesActivity.this);
-        List<Entry> entries = db.getEntriesList();
-        EntriesAdapter entriesAdapter = new EntriesAdapter(ShowEntriesActivity.this, entries);
-        lvEntries.setAdapter(entriesAdapter);
 
-//        lvEntries.getOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ArrayList<Entry> entries = db.getEntriesArray();
+
+        RecyclerEntriesAdapter entriesAdapter = new RecyclerEntriesAdapter(ShowEntriesActivity.this, entries);
+        rvEntries.setLayoutManager(new LinearLayoutManager(this));
+        rvEntries.setAdapter(entriesAdapter);
+
+//        rvEntries.getOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
 //            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Toast.makeText(ShowEntriesActivity.this, "Entry ID: " + ((Entry)entriesAdapter.getItem(position).getID), Toast.LENGTH_SHORT).show();
@@ -52,29 +51,4 @@ public class ShowEntriesActivity extends AppCompatActivity {
 //        });
     }
 
-    private void getEntries() {
-        Cursor cursor = db.getEntries();
-
-        if (cursor.getCount() <= 0) {
-            Toast.makeText(ShowEntriesActivity.this, "Data is empty", Toast.LENGTH_SHORT).show();
-
-            return;
-        }
-
-        // temporary -> change to ListView
-        StringBuffer buffer = new StringBuffer();
-
-        while (cursor.moveToNext()) {
-            buffer.append("ID: " + cursor.getString(0) + "\n");
-            buffer.append("Title: " + cursor.getString(3) + "\n");
-            buffer.append("Description: " + cursor.getString(4) + "\n");
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setCancelable(true);
-        builder.setTitle("Entries");
-        builder.setMessage(buffer);
-        builder.show();
-    }
 }

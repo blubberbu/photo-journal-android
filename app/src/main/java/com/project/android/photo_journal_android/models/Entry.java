@@ -1,14 +1,16 @@
 package com.project.android.photo_journal_android.models;
 
+import android.graphics.Bitmap;
+
 public class Entry {
     private int id;
     private int user_id;
-    private String image;
+    private Bitmap image;
     private String title;
     private String description;
     private String date;
 
-    public Entry(int id, int user_id, String image, String title, String description, String date) {
+    public Entry(int id, int user_id, Bitmap image, String title, String description, String date) {
         this.id = id;
         this.user_id = user_id;
         this.image = image;
@@ -45,11 +47,11 @@ public class Entry {
         this.user_id = user_id;
     }
 
-    public String getImage() {
+    public Bitmap getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(Bitmap image) {
         this.image = image;
     }
 

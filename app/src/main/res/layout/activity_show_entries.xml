@@ -7,15 +7,8 @@
     android:orientation="vertical"
     tools:context=".ShowEntriesActivity">
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvEntries"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/lvEntries"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnAddEntry" >
-
-    </ListView>
-
+        android:layout_height="match_parent" />
 </LinearLayout>

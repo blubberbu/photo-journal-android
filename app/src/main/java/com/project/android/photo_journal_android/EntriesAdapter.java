@@ -50,9 +50,10 @@ public class EntriesAdapter extends ArrayAdapter {
             entriesViewHolder = (EntriesViewHolder) rowView.getTag();
         }
 
-        Uri imgUri = Uri.parse(entry.getImage());
+//        Uri imgUri = Uri.parse(entry.getImage());
 
-        entriesViewHolder.imageView.setImageURI(imgUri);
+//        entriesViewHolder.imageView.setImageURI(imgUri);
+        entriesViewHolder.imageView.setImageBitmap(entry.getImage());
         entriesViewHolder.titleView.setText(entry.getTitle());
         entriesViewHolder.dateView.setText(entry.getDate());
 

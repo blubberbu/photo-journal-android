@@ -25,6 +25,7 @@ import com.project.android.photo_journal_android.models.Entry;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 public class AddEntryActivity extends AppCompatActivity {
@@ -36,7 +37,8 @@ public class AddEntryActivity extends AppCompatActivity {
     ImageView imageView;
     Button btnSave, btnBrowseImage;
 
-    String title, description, image;
+    String title, description;
+    Bitmap image;
     int user_id;
 
     @Override
@@ -114,22 +116,40 @@ public class AddEntryActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == PICK_IMAGE) {
                 Uri selectedImage = data.getData();
+                Bitmap imgBmp;
+
 //                String[] filePathColumn = { MediaStore.Images.Media.DATA };
-//
+
+                try {
+                    imgBmp = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                    imageView.setImageBitmap(imgBmp);
+                    image = imgBmp;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
 //                Cursor cursor = getContentResolver().query(selectedImage,
 //                        filePathColumn, null, null, null);
 //                cursor.moveToFirst();
-//
-//                int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA;
+//                int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
 //                String picturePath = cursor.getString(columnIndex);
+//                Toast.makeText(AddEntryActivity.this , "columnIndex " + cursor.getString(0), Toast.LENGTH_LONG).show();
 //                cursor.close();
 
-                image = selectedImage.toString();
 
-                Uri imgUri = Uri.parse(image);
-                imageView.setImageURI(imgUri);
+
+//                image = selectedImage.toString();
+//
+//                Uri imgUri = Uri.parse(image);
+//                imageView.setImageURI(imgUri);
             }
         }
+    }
+
+    public Bitmap loadImage(String filepath) {
+
+        return BitmapFactory.decodeFile(filepath);
+
     }
 
 }
