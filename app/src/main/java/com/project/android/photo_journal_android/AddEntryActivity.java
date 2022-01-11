@@ -1,17 +1,13 @@
 package com.project.android.photo_journal_android;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -22,24 +18,20 @@ import android.widget.Toast;
 
 import com.project.android.photo_journal_android.models.Entry;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class AddEntryActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 200;
 
     DatabaseHelper db;
 
-    EditText editTextTitle, editTextDesc;
+    EditText editTextTitle, editTextDescription;
     ImageView imageView;
-    Button btnSave, btnBrowseImage;
+    Button buttonSave, buttonBrowse;
 
     String title, description;
     Bitmap image;
-    int user_id;
+    int userId;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,36 +52,36 @@ public class AddEntryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_entry);
 
         editTextTitle = findViewById(R.id.editTextTitle);
-        editTextDesc = findViewById(R.id.editTextDesc);
+        editTextDescription = findViewById(R.id.editTextDescription);
         imageView = findViewById(R.id.imageView);
-        btnSave = findViewById(R.id.btnSave);
-        btnBrowseImage = findViewById(R.id.btnBrowseImage);
+        buttonSave = findViewById(R.id.buttonSave);
+        buttonBrowse = findViewById(R.id.buttonBrowse);
 
         db = new DatabaseHelper(this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        btnBrowseImage.setOnClickListener(new View.OnClickListener() {
+        buttonBrowse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pickImage();
             }
         });
 
-        btnSave.setOnClickListener(new View.OnClickListener() {
+        buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 title = editTextTitle.getText().toString();
-                description = editTextDesc.getText().toString();
+                description = editTextDescription.getText().toString();
 
-                user_id = 0;
+                userId = 0; // temporary
 
                 Entry entry;
 
                 if (title.length() < 1 || description.length() < 1 || image == null) {
                     Toast.makeText(AddEntryActivity.this, "Please fill the form properly.", Toast.LENGTH_SHORT).show();
                 } else {
-                    entry = new Entry(-1, user_id, image, title, description, "date");
+                    entry = new Entry(-1, userId, image, title, description, "date");
                     db.insertEntry(entry);
 
                     Toast.makeText(AddEntryActivity.this, "Your entry has been posted.", Toast.LENGTH_SHORT).show();
@@ -116,27 +108,24 @@ public class AddEntryActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == PICK_IMAGE) {
                 Uri selectedImage = data.getData();
-                Bitmap imgBmp;
+                Bitmap imageBitmap;
 
 //                String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
                 try {
-                    imgBmp = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
-                    imageView.setImageBitmap(imgBmp);
-                    image = imgBmp;
+                    imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                    imageView.setImageBitmap(imageBitmap);
+                    image = imageBitmap;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-//                Cursor cursor = getContentResolver().query(selectedImage,
-//                        filePathColumn, null, null, null);
+//                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
 //                cursor.moveToFirst();
 //                int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
 //                String picturePath = cursor.getString(columnIndex);
 //                Toast.makeText(AddEntryActivity.this , "columnIndex " + cursor.getString(0), Toast.LENGTH_LONG).show();
 //                cursor.close();
-
-
 
 //                image = selectedImage.toString();
 //
@@ -146,10 +135,8 @@ public class AddEntryActivity extends AppCompatActivity {
         }
     }
 
-    public Bitmap loadImage(String filepath) {
-
-        return BitmapFactory.decodeFile(filepath);
-
-    }
+//    public Bitmap loadImage(String filepath) {
+//        return BitmapFactory.decodeFile(filepath);
+//    }
 
 }
