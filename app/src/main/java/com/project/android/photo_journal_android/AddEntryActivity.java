@@ -1,11 +1,18 @@
 package com.project.android.photo_journal_android;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
@@ -21,16 +28,20 @@ import com.project.android.photo_journal_android.models.Entry;
 import java.io.IOException;
 
 public class AddEntryActivity extends AppCompatActivity {
-    private static final int PICK_IMAGE = 200;
+    private static final int PICK_IMAGE_REQUEST_CODE = 200;
+    private static final int CAMERA_REQUEST_CODE = 201;
+    private static final int CAMERA_PERMISSION_CODE = 202;
+    private static final int PERMISSION_CODE = 500;
 
     DatabaseHelper db;
 
     EditText editTextTitle, editTextDescription;
     ImageView imageView;
-    Button buttonSave, buttonBrowse;
+    Button buttonSave, buttonBrowse, buttonCamera;
 
     String title, description;
     Bitmap image;
+    Uri imageUri;
     int userId;
 
     @Override
@@ -56,6 +67,7 @@ public class AddEntryActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         buttonSave = findViewById(R.id.buttonSave);
         buttonBrowse = findViewById(R.id.buttonBrowse);
+        buttonCamera = findViewById(R.id.buttonCamera);
 
         db = new DatabaseHelper(this);
 
@@ -65,6 +77,26 @@ public class AddEntryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pickImage();
+            }
+        });
+
+        buttonCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //check if os is marshmallow or later, request runtime permission
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
+                            checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                        //permission not enabled, request permission
+                        String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        requestPermissions(permission, PERMISSION_CODE);
+                    }
+                    else {
+                        openCamera();
+                    }
+                } else {
+                    openCamera();
+                }
             }
         });
 
@@ -93,12 +125,40 @@ public class AddEntryActivity extends AppCompatActivity {
         });
     }
 
+    private void openCamera() {
+
+        ContentValues cv = new ContentValues();
+        cv.put(MediaStore.Images.Media.TITLE, "image");
+        cv.put(MediaStore.Images.Media.DESCRIPTION, "image from camera");
+        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
+
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+
+    }
+
     private void pickImage() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
 
-        startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_CODE: {
+                if (grantResults.length > 0 && grantResults[0] ==
+                        PackageManager.PERMISSION_GRANTED) {
+                    openCamera();
+                } else {
+                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     @Override
@@ -106,37 +166,25 @@ public class AddEntryActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == PICK_IMAGE) {
+            if (requestCode == PICK_IMAGE_REQUEST_CODE) {
                 Uri selectedImage = data.getData();
-                Bitmap imageBitmap;
-
-//                String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
                 try {
-                    imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
-                    imageView.setImageBitmap(imageBitmap);
-                    image = imageBitmap;
+                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                    imageView.setImageBitmap(image);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-//                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-//                cursor.moveToFirst();
-//                int columnIndex = cursor.getColumnIndexOrThrow(filePathColumn[0]);
-//                String picturePath = cursor.getString(columnIndex);
-//                Toast.makeText(AddEntryActivity.this , "columnIndex " + cursor.getString(0), Toast.LENGTH_LONG).show();
-//                cursor.close();
-
-//                image = selectedImage.toString();
-//
-//                Uri imgUri = Uri.parse(image);
-//                imageView.setImageURI(imgUri);
+            } else if (requestCode == CAMERA_REQUEST_CODE) {
+                try {
+                    image = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                    imageView.setImageBitmap(image);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
-
-//    public Bitmap loadImage(String filepath) {
-//        return BitmapFactory.decodeFile(filepath);
-//    }
-
 }
+
