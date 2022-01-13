@@ -27,19 +27,6 @@ public class EntryActivity extends AppCompatActivity {
     DatabaseHelper db = new DatabaseHelper(EntryActivity.this);
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-
-        // if logged in account
-        inflater.inflate(R.menu.menu_account, menu);
-
-        // else if guest
-//        inflater.inflate(R.menu.menu_account_guest, menu);
-
-        return true;
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry);

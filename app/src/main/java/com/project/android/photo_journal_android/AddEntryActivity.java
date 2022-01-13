@@ -30,7 +30,6 @@ import java.io.IOException;
 public class AddEntryActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST_CODE = 200;
     private static final int CAMERA_REQUEST_CODE = 201;
-    private static final int CAMERA_PERMISSION_CODE = 202;
     private static final int PERMISSION_CODE = 500;
 
     DatabaseHelper db;
@@ -43,19 +42,6 @@ public class AddEntryActivity extends AppCompatActivity {
     Bitmap image;
     Uri imageUri;
     int userId;
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-
-        // if logged in account
-        inflater.inflate(R.menu.menu_account, menu);
-
-        // else if guest
-//        inflater.inflate(R.menu.menu_account_guest, menu);
-
-        return true;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +76,7 @@ public class AddEntryActivity extends AppCompatActivity {
                         //permission not enabled, request permission
                         String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
                         requestPermissions(permission, PERMISSION_CODE);
-                    }
-                    else {
+                    } else {
                         openCamera();
                     }
                 } else {
@@ -126,8 +111,8 @@ public class AddEntryActivity extends AppCompatActivity {
     }
 
     private void openCamera() {
-
         ContentValues cv = new ContentValues();
+
         cv.put(MediaStore.Images.Media.TITLE, "image");
         cv.put(MediaStore.Images.Media.DESCRIPTION, "image from camera");
         imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
@@ -135,7 +120,6 @@ public class AddEntryActivity extends AppCompatActivity {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
-
     }
 
     private void pickImage() {

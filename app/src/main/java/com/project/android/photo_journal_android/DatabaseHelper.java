@@ -27,10 +27,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createUsersQuery = "Create table users(" +
-                "id INTEGER primary key autoincrement, " +
-                "name text, " +
-                "email text unique, " +
-                "password text)";
+                "id INTEGER primary key , " +
+                "name text)";
 
         db.execSQL(createUsersQuery);
 
