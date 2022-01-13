@@ -41,7 +41,7 @@ public class AddEntryActivity extends AppCompatActivity {
     String title, description;
     Bitmap image;
     Uri imageUri;
-    int userId;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,13 +85,16 @@ public class AddEntryActivity extends AppCompatActivity {
             }
         });
 
+        Intent intent = getIntent();
+        if (intent.hasExtra("User ID")) {
+            userId = intent.getStringExtra("User ID");
+        }
+
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 title = editTextTitle.getText().toString();
                 description = editTextDescription.getText().toString();
-
-                userId = 0; // temporary
 
                 Entry entry;
 
@@ -101,7 +104,7 @@ public class AddEntryActivity extends AppCompatActivity {
                     entry = new Entry(-1, userId, image, title, description, "date");
                     db.insertEntry(entry);
 
-                    Toast.makeText(AddEntryActivity.this, "Your entry has been posted.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddEntryActivity.this, entry.getTitle() + " has been posted.", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(AddEntryActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -135,8 +138,7 @@ public class AddEntryActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PERMISSION_CODE: {
-                if (grantResults.length > 0 && grantResults[0] ==
-                        PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openCamera();
                 } else {
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();

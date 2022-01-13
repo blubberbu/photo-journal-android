@@ -1,6 +1,5 @@
 package com.project.android.photo_journal_android;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,8 +13,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.huawei.hmf.tasks.OnCompleteListener;
 import com.huawei.hmf.tasks.OnFailureListener;
 import com.huawei.hmf.tasks.OnSuccessListener;
 import com.huawei.hmf.tasks.Task;
@@ -30,25 +31,26 @@ import com.project.android.photo_journal_android.models.Entry;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private AuthAccount account;
+    protected AuthAccount account;
     private AccountAuthService mAuthService;
     private AccountAuthParams mAuthParams;
 
     private static final int REQUEST_CODE_SIGN_IN = 16587;
     private static final String TAG = "Account";
 
-    Button buttonAddEntry;
-    RecyclerView rvEntries;
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Uri registerUrl = Uri.parse("https://id5.cloud.huawei.com/CAS/portal/userRegister/regbyemail.html");
-
         switch (item.getItemId()) {
             case R.id.navLogin:
                 signIn();
                 return true;
             case R.id.navRegister:
+                Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://id5.cloud.huawei.com/CAS/portal/userRegister/regbyemail.html"));
+                startActivity(urlIntent);
+                return true;
+            case R.id.navLogout:
+                signOut();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -56,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        silentSignIn();
-
         MenuInflater inflater = getMenuInflater();
 
         if (account == null) {
@@ -66,14 +66,12 @@ public class MainActivity extends AppCompatActivity {
             inflater.inflate(R.menu.menu_account_guest, menu);
         }
 
-        findViewById(R.id.navLogin).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn();
-            }
-        });
-
         return true;
+    }
+
+    @Override
+    public void invalidateOptionsMenu() {
+        super.invalidateOptionsMenu();
     }
 
     @Override
@@ -81,24 +79,49 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        buttonAddEntry = findViewById(R.id.buttonAddEntry);
+        silentSignIn();
+
+        DatabaseHelper db = new DatabaseHelper(MainActivity.this);
+        TextView textEmpty = findViewById(R.id.textEmpty);
+        RecyclerView rvEntries = findViewById(R.id.rvEntries);
+
+        Button buttonShowEntries = findViewById(R.id.buttonShowEntries);
+
+        buttonShowEntries.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (account == null) {
+                    Toast.makeText(MainActivity.this, "Please log in or register to continue.", Toast.LENGTH_SHORT).show();
+                } else {
+                    ArrayList<Entry> entries = db.getEntries(account.getUnionId());
+
+                    rvEntries.setVisibility(View.VISIBLE);
+
+                    if (entries.isEmpty()) {
+                        textEmpty.setText("No entries found");
+                    } else {
+                        EntriesAdapter entriesAdapter = new EntriesAdapter(MainActivity.this, entries);
+                        rvEntries.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                        rvEntries.setAdapter(entriesAdapter);
+                    }
+                }
+            }
+        });
+
+        Button buttonAddEntry = findViewById(R.id.buttonAddEntry);
 
         buttonAddEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddEntryActivity.class);
-                startActivity(intent);
+                if (account == null) {
+                    Toast.makeText(MainActivity.this, "Please log in or register to continue.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent intent = new Intent(MainActivity.this, AddEntryActivity.class);
+                    intent.putExtra("User ID", account.getUnionId());
+                    startActivity(intent);
+                }
             }
         });
-
-        rvEntries = findViewById(R.id.rvEntries);
-        DatabaseHelper db = new DatabaseHelper(MainActivity.this);
-
-        ArrayList<Entry> entries = db.getEntries();
-
-        EntriesAdapter entriesAdapter = new EntriesAdapter(MainActivity.this, entries);
-        rvEntries.setLayoutManager(new LinearLayoutManager(this));
-        rvEntries.setAdapter(entriesAdapter);
     }
 
     private void signIn() {
@@ -120,7 +143,8 @@ public class MainActivity extends AppCompatActivity {
             Task<AuthAccount> authAccountTask = AccountAuthManager.parseAuthResultFromIntent(data);
             if (authAccountTask.isSuccessful()) {
                 account = authAccountTask.getResult();
-                dealWithResultOfSignIn(account);
+                greetUser(account);
+                invalidateOptionsMenu();
 
                 Log.i(TAG, "Login succeeded: " + REQUEST_CODE_SIGN_IN);
             } else {
@@ -140,8 +164,9 @@ public class MainActivity extends AppCompatActivity {
         task.addOnSuccessListener(new OnSuccessListener<AuthAccount>() {
             @Override
             public void onSuccess(AuthAccount authAccount) {
-                dealWithResultOfSignIn(authAccount);
                 account = authAccount;
+                greetUser(account);
+                invalidateOptionsMenu();
             }
         });
 
@@ -157,23 +182,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signOut() {
-        Task<Void> task = mAuthService.signOut();
-
-        task.addOnSuccessListener(new OnSuccessListener<Void>() {
+        mAuthService.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onSuccess(Void aVoid) {
-                Log.i(TAG, "Logout succeeded");
+            public void onComplete(Task<Void> task) {
+                Log.i(TAG, "Logout complete");
+                findViewById(R.id.rvEntries).setVisibility(View.GONE);
             }
-        }).addOnFailureListener(new OnFailureListener() {
+        });
+
+        mAuthService.cancelAuthorization().addOnCompleteListener(new OnCompleteListener() {
             @Override
-            public void onFailure(Exception e) {
-                Log.i(TAG, "Logout failed");
+            public void onComplete(Task task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, "You have logged out.", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "Authorization revoked");
+                    account = null;
+                    invalidateOptionsMenu();
+                } else {
+                    Exception exception = task.getException();
+                    if (exception instanceof ApiException) {
+                        int statusCode = ((ApiException) exception).getStatusCode();
+                        Log.i(TAG, "Authorization revocation failed: " + statusCode);
+                    }
+                }
             }
         });
     }
 
-    // change method name
-    private void dealWithResultOfSignIn(AuthAccount authAccount) {
-        Toast.makeText(this, "Welcome back, " + authAccount.getDisplayName(), Toast.LENGTH_SHORT).show();
+    private void greetUser(AuthAccount authAccount) {
+        Toast.makeText(this, "Welcome back, " + authAccount.getDisplayName() + ".", Toast.LENGTH_SHORT).show();
     }
 }

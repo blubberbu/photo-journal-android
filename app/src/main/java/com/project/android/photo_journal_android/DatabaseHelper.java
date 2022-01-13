@@ -16,25 +16,15 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-
-    private ByteArrayOutputStream byteArrayOutputStream;
-    private byte[] imageByte;
-
     public DatabaseHelper(Context context) {
         super(context, "PhotoJournal.db", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createUsersQuery = "Create table users(" +
-                "id INTEGER primary key , " +
-                "name text)";
-
-        db.execSQL(createUsersQuery);
-
         String createEntriesQuery = "Create table entries(" +
                 "id INTEGER primary key autoincrement, " +
-                "user_id INTEGER, " +
+                "user_id text, " +
                 "image BLOB, " +
                 "title text, " +
                 "description text, " +
@@ -56,13 +46,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //Get image in byte to store into db
         Bitmap imgBmp = entry.getImage();
-        byteArrayOutputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         imgBmp.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        imageByte = byteArrayOutputStream.toByteArray();
+        byte[] imageByte = byteArrayOutputStream.toByteArray();
 
         ContentValues contentValues = new ContentValues();
 
-        contentValues.put("user_id", entry.getUser_id());
+        contentValues.put("user_id", entry.getUserId());
         contentValues.put("image", imageByte);
         contentValues.put("title", entry.getTitle());
         contentValues.put("description", entry.getDescription());
@@ -73,17 +63,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return !(result == -1);
     }
 
-    public ArrayList<Entry> getEntries() {
+    public ArrayList<Entry> getEntries(String unionId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        ArrayList<Entry> returnList = new ArrayList<>();
-        String selectQuery = "SELECT * FROM entries";
-
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        ArrayList<Entry> entryList = new ArrayList<>();
+        Cursor cursor = db.rawQuery("select * from entries where user_id=?", new String[]{unionId});
 
         if (cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(0);
-                int user_id = cursor.getInt(1);
+                String userId = cursor.getString(1);
                 byte[] imageBytesToBmp = cursor.getBlob(2);
                 //Convert byte from db to bitmap for object class
                 Bitmap imageBmp = BitmapFactory.decodeByteArray(imageBytesToBmp, 0, imageBytesToBmp.length);
@@ -91,16 +79,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String description = cursor.getString(4);
                 String date = cursor.getString(5);
 
-                Entry newEntry = new Entry(id, user_id, imageBmp, title, description, date);
-                returnList.add(newEntry);
-
+                Entry newEntry = new Entry(id, userId, imageBmp, title, description, date);
+                entryList.add(newEntry);
             } while (cursor.moveToNext());
         }
 
         cursor.close();
         db.close();
 
-        return returnList;
+        return entryList;
     }
 
     public Entry getEntry(Integer id) {
@@ -110,7 +97,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Entry entry = null;
 
         while (cursor.moveToNext()) {
-            int userId = cursor.getInt(1);
+            String userId = cursor.getString(1);
             byte[] imageBytesToBmp = cursor.getBlob(2);
             Bitmap imageBmp = BitmapFactory.decodeByteArray(imageBytesToBmp, 0, imageBytesToBmp.length);
             String title = cursor.getString(3);

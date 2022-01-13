@@ -4,15 +4,15 @@ import android.graphics.Bitmap;
 
 public class Entry {
     private int id;
-    private int user_id;
+    private String userId;
     private Bitmap image;
     private String title;
     private String description;
     private String date;
 
-    public Entry(int id, int user_id, Bitmap image, String title, String description, String date) {
+    public Entry(int id, String userId, Bitmap image, String title, String description, String date) {
         this.id = id;
-        this.user_id = user_id;
+        this.userId = userId;
         this.image = image;
         this.title = title;
         this.description = description;
@@ -23,7 +23,7 @@ public class Entry {
     public String toString() {
         return "Entry{" +
                 "id=" + id +
-                ", user_id=" + user_id +
+                ", user id=" + userId +
                 ", image='" + image + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
@@ -39,12 +39,12 @@ public class Entry {
         this.id = id;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public Bitmap getImage() {
