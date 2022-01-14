@@ -218,51 +218,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getToken() {
-        // Create a thread.
         new Thread() {
             @Override
             public void run() {
                 try {
-                    // Obtain the app ID from the agconnect-services.json file.
+                    // App ID from the agconnect-services.json file.
                     String appId = "105334565";
 
-                    // Set tokenScope to HCM.
                     String tokenScope = "HCM";
                     String token = HmsInstanceId.getInstance(MainActivity.this).getToken(appId, tokenScope);
-                    Log.i(PUSH_TAG, "get token: " + token);
 
-                    // Check whether the token is null.
+                    Log.i(PUSH_TAG, "Get token: " + token);
+
                     if (!TextUtils.isEmpty(token)) {
                         sendRegTokenToServer(token);
                     }
                 } catch (ApiException e) {
-                    Log.e(PUSH_TAG, "get token failed, " + e);
+                    Log.e(PUSH_TAG, "Get token failed: " + e);
                 }
             }
         }.start();
     }
 
     private void sendRegTokenToServer(String token) {
-        Log.i(PUSH_TAG, "sending token to server. token:" + token);
+        Log.i(PUSH_TAG, "Sending token to server: " + token);
     }
 
     private void refreshedTokenToServer(String token) {
-        Log.i(PUSH_TAG, "sending token to server. token:" + token);
+        Log.i(PUSH_TAG, "Sending token to server:" + token);
     }
 
     private void deleteToken() {
-        // Create a thread.
         new Thread() {
             @Override
             public void run() {
                 try {
-                    // Obtain the app ID from the agconnect-service.json file.
                     String appId = "105334565";
 
-                    // Set tokenScope to HCM.
                     String tokenScope = "HCM";
-                    // Delete the token.
                     HmsInstanceId.getInstance(MainActivity.this).deleteToken(appId, tokenScope);
+
                     Log.i(PUSH_TAG, "token deleted successfully");
                 } catch (ApiException e) {
                     Log.e(PUSH_TAG, "deleteToken failed." + e);
