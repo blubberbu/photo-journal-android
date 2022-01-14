@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +21,7 @@ import com.huawei.hmf.tasks.OnCompleteListener;
 import com.huawei.hmf.tasks.OnFailureListener;
 import com.huawei.hmf.tasks.OnSuccessListener;
 import com.huawei.hmf.tasks.Task;
+import com.huawei.hms.aaid.HmsInstanceId;
 import com.huawei.hms.common.ApiException;
 import com.huawei.hms.support.account.AccountAuthManager;
 import com.huawei.hms.support.account.request.AccountAuthParams;
@@ -31,6 +33,7 @@ import com.project.android.photo_journal_android.models.Entry;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String PUSH_TAG = "Token";
     protected AuthAccount account;
     private AccountAuthService mAuthService;
     private AccountAuthParams mAuthParams;
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         silentSignIn();
+        getToken();
 
         DatabaseHelper db = new DatabaseHelper(MainActivity.this);
         TextView textEmpty = findViewById(R.id.textEmpty);
@@ -211,5 +215,59 @@ public class MainActivity extends AppCompatActivity {
 
     private void greetUser(AuthAccount authAccount) {
         Toast.makeText(this, "Welcome back, " + authAccount.getDisplayName() + ".", Toast.LENGTH_SHORT).show();
+    }
+
+    private void getToken() {
+        // Create a thread.
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    // Obtain the app ID from the agconnect-services.json file.
+                    String appId = "105334565";
+
+                    // Set tokenScope to HCM.
+                    String tokenScope = "HCM";
+                    String token = HmsInstanceId.getInstance(MainActivity.this).getToken(appId, tokenScope);
+                    Log.i(PUSH_TAG, "get token: " + token);
+
+                    // Check whether the token is null.
+                    if (!TextUtils.isEmpty(token)) {
+                        sendRegTokenToServer(token);
+                    }
+                } catch (ApiException e) {
+                    Log.e(PUSH_TAG, "get token failed, " + e);
+                }
+            }
+        }.start();
+    }
+
+    private void sendRegTokenToServer(String token) {
+        Log.i(PUSH_TAG, "sending token to server. token:" + token);
+    }
+
+    private void refreshedTokenToServer(String token) {
+        Log.i(PUSH_TAG, "sending token to server. token:" + token);
+    }
+
+    private void deleteToken() {
+        // Create a thread.
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    // Obtain the app ID from the agconnect-service.json file.
+                    String appId = "105334565";
+
+                    // Set tokenScope to HCM.
+                    String tokenScope = "HCM";
+                    // Delete the token.
+                    HmsInstanceId.getInstance(MainActivity.this).deleteToken(appId, tokenScope);
+                    Log.i(PUSH_TAG, "token deleted successfully");
+                } catch (ApiException e) {
+                    Log.e(PUSH_TAG, "deleteToken failed." + e);
+                }
+            }
+        }.start();
     }
 }
