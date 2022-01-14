@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".DemoHmsMessageService" android:exported="false">
+        <service android:name=".MessageService" android:exported="false">
             <intent-filter>
                 <action android:name="com.huawei.push.action.MESSAGING_EVENT"/>
             </intent-filter>
