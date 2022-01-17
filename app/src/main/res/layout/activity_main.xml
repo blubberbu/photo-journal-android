@@ -7,28 +7,15 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/buttonAddEntry"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp">
-
-        <Button
-            android:id="@+id/buttonShowEntries"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_outline_view_list_24"
-            android:text="Show Entries"
-            app:layout_constraintLeft_toLeftOf="parent" />
-
-        <Button
-            android:id="@+id/buttonAddEntry"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:drawableLeft="@drawable/ic_outline_add_24"
-            android:text="Add Entry"
-            app:layout_constraintRight_toRightOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_gravity="end"
+        android:layout_margin="16dp"
+        android:drawableLeft="@drawable/ic_outline_add_24"
+        android:text="Add Entry"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
         android:id="@+id/textEmpty"

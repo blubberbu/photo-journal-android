@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.navLogin:
-                signIn();
+                silentSignIn();
                 return true;
             case R.id.navRegister:
                 Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://id5.cloud.huawei.com/CAS/portal/userRegister/regbyemail.html"));
@@ -82,35 +82,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        silentSignIn();
+        if (account == null) {
+            silentSignIn();
+        }
+
         getToken();
-
-        DatabaseHelper db = new DatabaseHelper(MainActivity.this);
-        TextView textEmpty = findViewById(R.id.textEmpty);
-        RecyclerView rvEntries = findViewById(R.id.rvEntries);
-
-        Button buttonShowEntries = findViewById(R.id.buttonShowEntries);
-
-        buttonShowEntries.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (account == null) {
-                    Toast.makeText(MainActivity.this, "Please log in or register to continue.", Toast.LENGTH_SHORT).show();
-                } else {
-                    ArrayList<Entry> entries = db.getEntries(account.getUnionId());
-
-                    rvEntries.setVisibility(View.VISIBLE);
-
-                    if (entries.isEmpty()) {
-                        textEmpty.setText("No entries found");
-                    } else {
-                        EntriesAdapter entriesAdapter = new EntriesAdapter(MainActivity.this, entries);
-                        rvEntries.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-                        rvEntries.setAdapter(entriesAdapter);
-                    }
-                }
-            }
-        });
 
         Button buttonAddEntry = findViewById(R.id.buttonAddEntry);
 
@@ -147,19 +123,21 @@ public class MainActivity extends AppCompatActivity {
             Task<AuthAccount> authAccountTask = AccountAuthManager.parseAuthResultFromIntent(data);
             if (authAccountTask.isSuccessful()) {
                 account = authAccountTask.getResult();
-                greetUser(account);
+                getUserEntries(account.getUnionId());
                 invalidateOptionsMenu();
 
                 Log.i(TAG, "Login succeeded: " + REQUEST_CODE_SIGN_IN);
             } else {
                 Log.e(TAG, "Login failed: " + ((ApiException) authAccountTask.getException()).getStatusCode());
+                Toast.makeText(this, "Login failed, please try again.", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void silentSignIn() {
         mAuthParams = new AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM)
-                .setEmail()
+                .setIdToken()
+                .setAccessToken()
                 .createParams();
 
         mAuthService = AccountAuthManager.getService(this, mAuthParams);
@@ -169,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(AuthAccount authAccount) {
                 account = authAccount;
-                greetUser(account);
+                getUserEntries(account.getUnionId());
                 invalidateOptionsMenu();
             }
         });
@@ -213,8 +191,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void greetUser(AuthAccount authAccount) {
-        Toast.makeText(this, "Welcome back, " + authAccount.getDisplayName() + ".", Toast.LENGTH_SHORT).show();
+    private void getUserEntries(String userId) {
+        DatabaseHelper db = new DatabaseHelper(MainActivity.this);
+        TextView textEmpty = findViewById(R.id.textEmpty);
+        RecyclerView rvEntries = findViewById(R.id.rvEntries);
+
+        ArrayList<Entry> entries = db.getEntries(userId);
+
+        if (entries.isEmpty()) {
+            textEmpty.setText("No entries found");
+        } else {
+            EntriesAdapter entriesAdapter = new EntriesAdapter(MainActivity.this, entries);
+            rvEntries.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+            rvEntries.setAdapter(entriesAdapter);
+        }
     }
 
     private void getToken() {
@@ -222,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    // App ID from the agconnect-services.json file.
+                    // App ID from agconnect-services.json
                     String appId = "105334565";
 
                     String tokenScope = "HCM";
