@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-<!--    <uses-permission android:name="com.huawei.appmarket.service.commondata.permission.GET_COMMON_DATA" />-->
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -36,16 +35,19 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".MessageService" android:exported="false">
+        <service
+            android:name=".MessageService"
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.huawei.push.action.MESSAGING_EVENT"/>
+                <action android:name="com.huawei.push.action.MESSAGING_EVENT" />
             </intent-filter>
-        </service>        
+        </service>
 
         <meta-data
             android:name="com.huawei.hms.client.channel.androidMarket"
             android:value="false" />
     </application>
+
     <queries>
         <intent>
             <action android:name="com.huawei.hms.core.aidlservice" />
